@@ -36,7 +36,7 @@ public class KafkaConsumer {
             ex.printStackTrace();
         }
 
-        Product product = productRepository.findByProductId((String) map.get("productId"));
+        Product product = productRepository.findById((String) map.get("id"));
         if(product != null){
             // 해당 상품이 있디면, 상품 재고를 갱신해주고, 저장시킵니다.
             product.setStock(product.getStock() - (Integer) map.get("stock"));
