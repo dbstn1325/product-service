@@ -1,16 +1,16 @@
 package com.example.itemservice;
 
 import com.example.itemservice.dto.FilterProductRequest;
+import com.example.itemservice.dto.ProductFilterDto;
 import com.example.itemservice.entity.Product;
 import com.example.itemservice.repository.ProductFilterRepository;
 import com.example.itemservice.vo.ResponseProduct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -34,19 +34,8 @@ public class ProductController {
                 .body(productService.getAllProducts());
     }
 
-    @GetMapping("/products_filter")
-    public ResponseEntity<List<Product>> filter(
-            @RequestParam(required = false) List<String> productMadeBy,
-            @RequestParam(required = false) List<String> productWeightRange,
-            @RequestParam(required = false) List<String> productPriceRange) {
-
-        FilterProductRequest filterProductRequest = new FilterProductRequest();
-        filterProductRequest.setProductMadeBy(productMadeBy);
-        filterProductRequest.setProductWeightRange(productWeightRange);
-        filterProductRequest.setProductPriceRange(productPriceRange);
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(productFilterRepository.filterProducts(filterProductRequest));
+    @GetMapping("/products/filter")
+    public Page<Product> filterProducts(@ModelAttribute ProductFilterDto productFilterDto, Pageable pageable) {
+        return productFilterRepository.filterProducts(productFilterDto, pageable);
     }
 }

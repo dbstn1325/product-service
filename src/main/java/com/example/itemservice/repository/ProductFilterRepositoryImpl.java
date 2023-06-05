@@ -1,12 +1,16 @@
 package com.example.itemservice.repository;
 
-import com.example.itemservice.dto.FilterProductRequest;
+import com.example.itemservice.dto.ProductFilterDto;
 import com.example.itemservice.entity.Product;
 import com.example.itemservice.entity.QProduct;
+import com.example.itemservice.repository.ProductFilterRepository;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.Tuple;
+import com.querydsl.core.QueryResults;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -21,7 +25,7 @@ public class ProductFilterRepositoryImpl implements ProductFilterRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<Product> filterProducts(FilterProductRequest productDto) {
+    public Page<Product> filterProducts(ProductFilterDto productDto, Pageable pageable) {
         QProduct product = QProduct.product;
 
         BooleanBuilder builder = new BooleanBuilder();
@@ -101,9 +105,16 @@ public class ProductFilterRepositoryImpl implements ProductFilterRepository {
             builder.and(priceBuilder);
         }
 
-        return queryFactory
+        QueryResults<Product> queryResults = queryFactory
                 .selectFrom(product)
                 .where(builder)
-                .fetch();
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+
+        List<Product> products = queryResults.getResults();
+        long total = queryResults.getTotal();
+
+        return new PageImpl<>(products, pageable, total);
     }
 }

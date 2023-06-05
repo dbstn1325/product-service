@@ -57,10 +57,10 @@ public class Product implements Serializable {
     @Column(name = "product_battery", nullable = false, precision = 10, scale = 2)
     private BigDecimal productBattery;
 
-    @Column(name = "product_weight", nullable = false)
+    @Column(name = "product_weight", nullable = false, precision = 10, scale = 2)
     private BigDecimal productWeight;
 
-    @Column(name = "product_price", nullable = false,precision = 10, scale = 2)
+    @Column(name = "product_price", nullable = false)
     private int productPrice;
 
     @Column(name = "product_stock", nullable = false)
