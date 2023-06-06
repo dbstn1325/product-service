@@ -35,13 +35,25 @@ public class ProductFilterRepositoryImpl implements ProductFilterRepository {
             BooleanBuilder madebyBuilder = new BooleanBuilder();
             for(String madeby : productDto.getProductMadeBy()) {
                 switch (madeby) {
-                    case "SAMSUNG":
+                    case "삼성":
                         madebyBuilder.or(product.productMadeBy.contains("삼성"));
                         break;
                     case "LG":
                         madebyBuilder.or(product.productMadeBy.contains("LG"));
                         break;
+                    case "HP":
+                        madebyBuilder.or(product.productMadeBy.contains("HP"));
+                        break;
+                    case "한성컴퓨터":
+                        madebyBuilder.or(product.productMadeBy.contains("한성"));
+                        break;
                     case "RAZER":
+                        madebyBuilder.or(product.productMadeBy.contains("RAZER"));
+                        break;
+                    case "애플":
+                        madebyBuilder.or(product.productMadeBy.contains("APPLE"));
+                        break;
+                    case "에이서":
                         madebyBuilder.or(product.productMadeBy.contains("에이서"));
                         break;
                     case "ASUS":

@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResponseProduct {
     private String productId;
+    private String productMadeBy;
     private String productName;
     private String productCpu;
     private String productImage;

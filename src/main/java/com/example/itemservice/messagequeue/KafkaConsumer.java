@@ -16,37 +16,37 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-@Service
-@Slf4j
-@RequiredArgsConstructor
-public class KafkaConsumer {
-    private final ProductRepository productRepository;
-
-    @KafkaListener(topics="update-quantity-product")
-    public void updateQuantity(String kafkaMessage){
-        log.info("Kafka Message: "+ kafkaMessage);
-
-        Map<Object, Object> map = new HashMap<>();
-        ObjectMapper mapper = new ObjectMapper();
-
-        try{
-            //String값으로 전달받은 메시지를 우리가 원하는 데이터타입(Json)으로 변경해줍니다.
-            map = mapper.readValue(kafkaMessage, new TypeReference<Map<Object, Object>>() {});
-        } catch(JsonProcessingException ex){
-            ex.printStackTrace();
-        }
-
-        log.info("asdfasdf" + map.get("productId"));
-
-        Long productId = Long.parseLong((String) map.get("productId"));
-        Product product = productRepository.findById(productId).get();
-        if(product != null){
-            // 해당 상품이 있디면, 상품 재고를 갱신해주고, 저장시킵니다.
-            product.setStock(product.getStock() - (Integer) map.get("stock"));
-            productRepository.save(product);
-        }
-
-    }
+// @Service
+// @Slf4j
+// @RequiredArgsConstructor
+// public class KafkaConsumer {
+//     private final ProductRepository productRepository;
+//
+//     @KafkaListener(topics="update-quantity-product")
+//     public void updateQuantity(String kafkaMessage){
+//         log.info("Kafka Message: "+ kafkaMessage);
+//
+//         Map<Object, Object> map = new HashMap<>();
+//         ObjectMapper mapper = new ObjectMapper();
+//
+//         try{
+//             //String값으로 전달받은 메시지를 우리가 원하는 데이터타입(Json)으로 변경해줍니다.
+//             map = mapper.readValue(kafkaMessage, new TypeReference<Map<Object, Object>>() {});
+//         } catch(JsonProcessingException ex){
+//             ex.printStackTrace();
+//         }
+//
+//         log.info("asdfasdf" + map.get("productId"));
+//
+//         Long productId = Long.parseLong((String) map.get("productId"));
+//         Product product = productRepository.findById(productId).get();
+//         if(product != null){
+//             // 해당 상품이 있디면, 상품 재고를 갱신해주고, 저장시킵니다.
+//             product.setStock(product.getStock() - (Integer) map.get("stock"));
+//             productRepository.save(product);
+//         }
+//
+//     }
 
 
 
@@ -159,5 +159,5 @@ public class KafkaConsumer {
 //
 //    }
 //
-
-}
+//
+// }

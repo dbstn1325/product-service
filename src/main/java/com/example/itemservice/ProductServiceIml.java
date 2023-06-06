@@ -27,4 +27,12 @@ public class ProductServiceIml implements ProductService{
         products.forEach(v -> findProduct.add(modelMapper.map(v, ResponseProduct.class)));
         return findProduct;
     }
+
+    @Override
+    public ResponseProduct findById(Long id) {
+        Product product = productRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당하는 제품이 없습니다"));
+        ModelMapper modelMapper = new ModelMapper();
+
+        return modelMapper.map(product, ResponseProduct.class);
+    }
 }
