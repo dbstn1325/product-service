@@ -29,6 +29,8 @@ public class KafkaConsumerConfig {
     }
 
     //Product 쪽 Consumer등록
+    // CartService.add (prouctId) => ItemService조회
+    // ItemService
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory(){
         ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory =

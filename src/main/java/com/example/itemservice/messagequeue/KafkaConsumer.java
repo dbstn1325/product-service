@@ -2,6 +2,7 @@ package com.example.itemservice.messagequeue;
 
 import com.example.itemservice.ProductRepository;
 import com.example.itemservice.config.OutOfStockException;
+import com.example.itemservice.dto.ProductCartResponse;
 import com.example.itemservice.entity.Product;
 import com.fasterxml.jackson.core.JsonProcessingException; //jackson
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -21,6 +22,7 @@ import java.util.concurrent.ExecutionException;
 @RequiredArgsConstructor
 public class KafkaConsumer {
     private final ProductRepository productRepository;
+    private final KafkaTemplate kafkaTemplate;
 
     @KafkaListener(topics="update-quantity-product")
     public void updateQuantity(String kafkaMessage){
@@ -45,6 +47,56 @@ public class KafkaConsumer {
             product.setStock(product.getStock() - (Integer) map.get("stock"));
             productRepository.save(product);
         }
+
+    }
+
+    @KafkaListener(topics="retrieve-product")
+    public void getRetrieveProduct(String kafkaMessage){
+        log.info("Kafka Message: "+ kafkaMessage);
+
+        Map<Object, Object> map = new HashMap<>();
+        ObjectMapper mapper = new ObjectMapper();
+
+        try{
+            //String값으로 전달받은 메시지를 우리가 원하는 데이터타입(Json)으로 변경해줍니다.
+            map = mapper.readValue(kafkaMessage, new TypeReference<Map<Object, Object>>() {});
+        } catch(JsonProcessingException ex){
+            ex.printStackTrace();
+        }
+
+        log.info("asdfasdf" + map.get("productId"));
+
+        Long productId = Long.parseLong((String) map.get("productId"));
+        Product product = productRepository.findById(productId).get();
+        if(product != null){
+            log.info(product.getId() + " " + product.getProductName());
+
+            ProductCartResponse productCartResponse = ProductCartResponse.builder()
+                    .userId(map.get("userId").toString())
+                    .productId(product.getId().toString())
+                    .productImage(product.getProductImage())
+                    .productName(product.getProductName())
+                    .productMadeBy(product.getProductMadeBy())
+                    .productPrice(product.getProductPrice())
+                    .build();
+
+            try{
+                String productJson = new ObjectMapper().writeValueAsString(productCartResponse);
+
+                log.info("hello" +productJson);
+                kafkaTemplate.send("cart-product-info", productJson);
+            }catch(JsonProcessingException ex){
+                log.error("Failed to Serialize to Product");
+            }
+
+//            kafkaTemplate.send("cart-product-info", product.toString());
+//            return product;
+
+            // 해당 상품이 있디면, 상품 재고를 갱신해주고, 저장시킵니다.
+//            product.setStock(product.getStock() - (Integer) map.get("stock"));
+//            productRepository.save(product);
+        }
+//        return product;
 
     }
 
