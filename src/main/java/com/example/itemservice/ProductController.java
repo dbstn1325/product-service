@@ -27,6 +27,11 @@ public class ProductController {
         return String.format("Server on port %s", request.getServerPort());
     }
 
+    @GetMapping("/{id}")
+    public ResponseProduct findById(@PathVariable Long id){
+        return productService.findById(id);
+    }
+
     @GetMapping("/products")
     public ResponseEntity<List<ResponseProduct>> findAllProducts(){
         return ResponseEntity
