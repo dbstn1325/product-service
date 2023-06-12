@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 public class ResponseProduct {
     private String productId;
     private String productName;
+    private String productMadeBy;
     private String productCpu;
     private String productImage;
     private int productRamCapacity;
